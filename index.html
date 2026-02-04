@@ -1,0 +1,49 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Sweet Memories 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="hearts"></div>
+
+  <header>
+    <h1>Our Sweet Memories 💕</h1>
+    <p>Every moment with you is a treasure WHEM 💕 TIN✨</p>
+  </header>
+
+  <main>
+    <section class="memory-form">
+      <input type="text" id="memoryTitle" placeholder="Memory Title 📝">
+      <textarea id="memoryText" placeholder="Write your memory here..."></textarea>
+      <input type="file" id="memoryPhoto" accept="image/*,video/*">
+      <button onclick="addMemory()">Add Memory 💌</button>
+    </section>
+
+    <section class="memory-list" id="memoryList">
+      <!-- Memories appear here -->
+    </section>
+  </main>
+
+  <footer>
+    <p>Made with ❤️ by Justin</p>
+  </footer>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox">
+    <span class="close" onclick="closeLightbox()">&times;</span>
+    <div class="lightbox-container">
+      <div class="lightbox-media" id="lightboxMedia"></div>
+      <div class="lightbox-text">
+        <h2 id="lightboxTitle"></h2>
+        <p id="lightboxText"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

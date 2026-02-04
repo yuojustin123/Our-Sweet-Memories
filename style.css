@@ -1,0 +1,188 @@
+/* ===== General ===== */
+body {
+  font-family: 'Patrick Hand', cursive;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #fff0f5, #ffe4e1);
+  overflow-x: hidden;
+  position: relative;
+  color: #800080;
+}
+
+/* Floating Hearts */
+.hearts {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+.heart {
+  position: absolute;
+  bottom: -50px;
+  font-size: 1.5rem;
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding: 2rem;
+  background: #ffb6c1;
+}
+header h1 {
+  font-family: 'Caveat', cursive;
+  font-size: 3rem;
+  color: #ff69b4;
+  text-shadow: 1px 1px 2px #ffe4e1;
+}
+header p {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1.3rem;
+  color: #d46a6a;
+}
+
+/* Memory Form */
+.memory-form {
+  text-align: center;
+  padding: 1.5rem;
+  margin: 1rem auto;
+  max-width: 400px;
+  background: #ffe4e1;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.memory-form input, .memory-form textarea, .memory-form button {
+  width: 80%;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 10px;
+  border: 1px solid #ffb6c1;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1rem;
+}
+.memory-form textarea {
+  resize: vertical;
+  height: 80px;
+}
+.memory-form button {
+  background: #ff69b4;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.memory-form button:hover {
+  background: #ff1493;
+  transform: scale(1.05);
+}
+
+/* Memory List Grid */
+.memory-list {
+  max-width: 1000px;
+  margin: 1rem auto;
+  column-count: 3;
+  column-gap: 1rem;
+}
+.memory-item {
+  background: #fff0f5;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 1rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.memory-item:hover {
+  transform: scale(1.02);
+}
+.memory-item img, .memory-item video {
+  width: 100%;
+  display: block;
+  border-radius: 15px;
+}
+
+/* Lightbox background */
+.lightbox {
+  display: none;
+  position: fixed;
+  z-index: 50;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7); /* slightly dark overlay */
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Close button */
+.lightbox .close {
+  position: absolute;
+  top: 20px; right: 30px;
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+}
+
+/* Container: media left + text right */
+.lightbox-container {
+  display: flex;
+  width: 90%;
+  max-width: 1000px;
+  height: 80%;
+  background: #fff0f5; /* soft pastel background */
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+/* Left: large media */
+.lightbox-media {
+  flex: 1 1 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff; /* optional, make media background white */
+}
+
+.lightbox-media img,
+.lightbox-media video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+/* Right: title + memory text */
+.lightbox-text {
+  flex: 1 1 50%;
+  padding: 30px;
+  overflow-y: auto;
+  color: #800080;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1.3rem; /* readable size */
+}
+
+.lightbox-text h2 {
+  font-family: 'Caveat', cursive;
+  font-size: 2rem;
+  margin-bottom: 15px;
+  color: #ff1493;
+}
+
+.lightbox-text p {
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+}
+/* Memory preview title under photo */
+.memory-item p.title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.2rem;
+  color: #ff1493;
+  text-align: center;
+  margin: 8px 0 0 0;
+  word-wrap: break-word;
+}
