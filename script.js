@@ -1,4 +1,43 @@
-/* ===== Add Memory ===== */
+const STORAGE_KEY = 'sweetMemories';
+
+function loadMemories() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch (error) {
+    console.warn('Unable to load memories.', error);
+    return [];
+  }
+}
+
+function saveMemories(memories) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(memories));
+  } catch (error) {
+    console.warn('Unable to save memories.', error);
+  }
+}
+
+function renderMemory(memory) {
+  const memoryList = document.getElementById('memoryList');
+  const memoryItem = document.createElement('div');
+  memoryItem.className = 'memory-item';
+
+  if (memory.mediaSrc) {
+    const mediaMarkup = memory.mediaType?.startsWith('image')
+      ? `<img src="${memory.mediaSrc}" alt="Memory">`
+      : `<video src="${memory.mediaSrc}" muted loop></video>`;
+    memoryItem.innerHTML = mediaMarkup + `<p class="title">${memory.title || ''}</p>`;
+  } else {
+    memoryItem.innerHTML = `<p class="title">${memory.title || ''}</p>`;
+  }
+
+  memoryItem.addEventListener('click', () =>
+    openLightbox(memory.mediaSrc, memory.mediaType, memory.title, memory.text)
+  );
+  memoryList.appendChild(memoryItem);
+}
+
 function addMemory() {
   const title = document.getElementById('memoryTitle').value;
   const text = document.getElementById('memoryText').value;
@@ -10,36 +49,32 @@ function addMemory() {
     return;
   }
 
-  const memoryList = document.getElementById('memoryList');
-  const memoryItem = document.createElement('div');
-  memoryItem.className = 'memory-item';
+  const memories = loadMemories();
+
+  const finalizeMemory = (memory) => {
+    memories.push(memory);
+    saveMemories(memories);
+    renderMemory(memory);
+  };
 
   if (file) {
     const reader = new FileReader();
     reader.onload = function(e) {
-      let media;
-      if (file.type.startsWith("image")) {
-        media = `<img src="${e.target.result}" alt="Memory">`;
-      } else if (file.type.startsWith("video")) {
-        media = `<video src="${e.target.result}" muted loop></video>`;
-      }
-
-      memoryItem.innerHTML = media + `<p class="title">${title}</p>`;
-      memoryList.appendChild(memoryItem);
-
-      memoryItem.addEventListener('click', () =>
-        openLightbox(e.target.result, file.type, title, text)
-      );
+      finalizeMemory({
+        title: title.trim(),
+        text: text.trim(),
+        mediaSrc: e.target.result,
+        mediaType: file.type
+      });
     };
     reader.readAsDataURL(file);
   } else {
-    // If no file, just show title
-    memoryItem.innerHTML = `<p class="title">${title}</p>`;
-    memoryList.appendChild(memoryItem);
-
-    memoryItem.addEventListener('click', () =>
-      openLightbox(null, null, title, text)
-    );
+    finalizeMemory({
+      title: title.trim(),
+      text: text.trim(),
+      mediaSrc: null,
+      mediaType: null
+    });
   }
 
   // Reset form
@@ -65,6 +100,11 @@ function createHeart() {
   setTimeout(() => heart.remove(), 6000);
 }
 setInterval(createHeart, 400);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const memories = loadMemories();
+  memories.forEach(renderMemory);
+});
 
 /* ===== Lightbox ===== */
 function openLightbox(src, type, title, text) {
