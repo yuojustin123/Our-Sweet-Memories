@@ -78,6 +78,36 @@ header p {
   transform: scale(1.05);
 }
 
+/* Memory Sync */
+.memory-sync {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto 1rem;
+  flex-wrap: wrap;
+}
+.memory-sync button,
+.memory-sync .import-button {
+  background: #ffd1dc;
+  color: #800080;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-family: 'Patrick Hand', cursive;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+.memory-sync button:hover,
+.memory-sync .import-button:hover {
+  background: #ffb6c1;
+  transform: translateY(-1px);
+}
+.memory-sync input[type="file"] {
+  display: none;
+}
+
 /* Memory List Grid */
 .memory-list {
   max-width: 1000px;

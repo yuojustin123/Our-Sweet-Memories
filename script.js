@@ -38,6 +38,12 @@ function renderMemory(memory) {
   memoryList.appendChild(memoryItem);
 }
 
+function renderMemories(memories) {
+  const memoryList = document.getElementById('memoryList');
+  memoryList.innerHTML = '';
+  memories.forEach(renderMemory);
+}
+
 function addMemory() {
   const title = document.getElementById('memoryTitle').value;
   const text = document.getElementById('memoryText').value;
@@ -103,7 +109,52 @@ setInterval(createHeart, 400);
 
 document.addEventListener('DOMContentLoaded', () => {
   const memories = loadMemories();
-  memories.forEach(renderMemory);
+  renderMemories(memories);
+
+  const exportButton = document.getElementById('exportMemories');
+  const importInput = document.getElementById('importMemories');
+
+  exportButton.addEventListener('click', () => {
+    const data = loadMemories();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'sweet-memories.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  importInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (!Array.isArray(imported)) {
+          throw new Error('Invalid file format.');
+        }
+        const sanitized = imported.map((memory) => ({
+          title: typeof memory.title === 'string' ? memory.title : '',
+          text: typeof memory.text === 'string' ? memory.text : '',
+          mediaSrc: typeof memory.mediaSrc === 'string' ? memory.mediaSrc : null,
+          mediaType: typeof memory.mediaType === 'string' ? memory.mediaType : null
+        }));
+        saveMemories(sanitized);
+        renderMemories(sanitized);
+      } catch (error) {
+        alert('Unable to import memories. Please choose a valid file.');
+      } finally {
+        importInput.value = '';
+      }
+    };
+    reader.readAsText(file);
+  });
 });
 
 /* ===== Lightbox ===== */
