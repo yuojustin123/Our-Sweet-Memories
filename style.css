@@ -78,86 +78,37 @@ header p {
   transform: scale(1.05);
 }
 
-/* Memory Sync */
-.memory-sync {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 12px;
-  margin: 0 auto 1rem;
-  flex-wrap: wrap;
-}
-.memory-sync .sync-status {
+/* Public Feed */
+.public-feed {
   max-width: 640px;
-  margin: 0 auto;
-  padding: 12px 16px;
+  margin: 0 auto 1rem;
+  padding: 16px 20px;
   background: #fff0f5;
-  border-radius: 16px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  border-radius: 18px;
   text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
 }
-.memory-sync .status-label {
+.public-feed .feed-title {
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #ff1493;
   margin: 0 0 8px;
 }
-.memory-sync .sync-link-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
+.public-feed .feed-status {
+  margin: 0;
+  font-size: 1rem;
+  color: #a35d8f;
 }
-.memory-sync #syncLink {
-  min-width: 240px;
-  flex: 1 1 280px;
+.public-feed .feed-status[data-variant="success"] {
+  color: #b14c84;
 }
-.memory-sync .status-note {
+.public-feed .feed-status[data-variant="warning"] {
+  color: #b65050;
+}
+.public-feed .feed-note {
   margin: 10px 0 0;
   font-size: 0.95rem;
   color: #a35d8f;
-}
-.memory-sync .status-note[data-variant="success"] {
-  color: #b14c84;
-}
-.memory-sync .status-note[data-variant="warning"] {
-  color: #b65050;
-}
-.memory-sync .sync-row {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-.memory-sync input[type="text"] {
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #ffb6c1;
-  font-family: 'Patrick Hand', cursive;
-  font-size: 1rem;
-  min-width: 200px;
-}
-.memory-sync button,
-.memory-sync .import-button {
-  background: #ffd1dc;
-  color: #800080;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-family: 'Patrick Hand', cursive;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: 0.3s;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-}
-.memory-sync button:hover,
-.memory-sync .import-button:hover {
-  background: #ffb6c1;
-  transform: translateY(-1px);
-}
-.memory-sync input[type="file"] {
-  display: none;
 }
 /* Memory List Grid */
 .memory-list {
@@ -267,6 +218,7 @@ header p {
   margin: 8px 0 0 0;
   word-wrap: break-word;
 }
+
 
 
 
