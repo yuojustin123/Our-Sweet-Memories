@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'sweetMemories';
 const SYNC_KEY = 'sweetMemoriesSyncId';
+const SYNC_LINK_KEY = 'sweetMemoriesSyncLink';
 const CLOUD_BASE_URL = 'https://jsonblob.com/api/jsonBlob';
 
 function loadMemories() {
@@ -20,9 +21,9 @@ function saveMemories(memories) {
   }
 }
 
-async function saveMemoriesToCloud(syncId, memories) {
-  if (!syncId) {
-    return;
+async function saveMemoriesToCloud(syncId, memories) {␊
+  if (!syncId) {␊
+    return;␊
   }
   try {
     const response = await fetch(`${CLOUD_BASE_URL}/${syncId}`, {
@@ -37,6 +38,37 @@ async function saveMemoriesToCloud(syncId, memories) {
     console.warn('Unable to sync memories.', error);
     alert('Unable to sync memories right now.');
   }
+}
+
+function getSyncIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const syncId = params.get('sync');
+  return syncId ? syncId.trim() : '';
+}
+
+function buildSyncLink(syncId) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('sync', syncId);
+  return url.toString();
+}
+
+function updateSyncStatus(message, variant = 'info') {
+  const status = document.getElementById('syncStatus');
+  if (!status) {
+    return;
+  }
+  status.textContent = message;
+  status.dataset.variant = variant;
+}
+
+function setSyncLink(syncId) {
+  const linkInput = document.getElementById('syncLink');
+  if (!linkInput || !syncId) {
+    return;
+  }
+  const link = buildSyncLink(syncId);
+  linkInput.value = link;
+  localStorage.setItem(SYNC_LINK_KEY, link);
 }
 
 async function createCloudSync(memories) {
@@ -61,9 +93,9 @@ async function createCloudSync(memories) {
   }
 }
 
-async function loadMemoriesFromCloud(syncId) {
-  if (!syncId) {
-    return null;
+async function loadMemoriesFromCloud(syncId) {␊
+  if (!syncId) {␊
+    return null;␊
   }
   try {
     const response = await fetch(`${CLOUD_BASE_URL}/${syncId}`);
@@ -77,9 +109,9 @@ async function loadMemoriesFromCloud(syncId) {
     alert('Unable to load memories from that code.');
     return null;
   }
-}
-
-function renderMemory(memory) {
+}␊
+␊
+function renderMemory(memory) {␊
   const memoryList = document.getElementById('memoryList');
   const memoryItem = document.createElement('div');
   memoryItem.className = 'memory-item';
@@ -105,6 +137,54 @@ function renderMemories(memories) {
   memories.forEach(renderMemory);
 }
 
+async function ensureCloudSync(memories) {
+  let syncId = localStorage.getItem(SYNC_KEY);
+  const urlSyncId = getSyncIdFromUrl();
+  if (urlSyncId && urlSyncId !== syncId) {
+    syncId = urlSyncId;
+    localStorage.setItem(SYNC_KEY, syncId);
+    updateSyncStatus('Loading your memories from the shared link…');
+    const cloudMemories = await loadMemoriesFromCloud(syncId);
+    if (cloudMemories) {
+      saveMemories(cloudMemories);
+      renderMemories(cloudMemories);
+      updateSyncStatus('Memories loaded! They will stay synced across devices.', 'success');
+    } else {
+      updateSyncStatus('We could not load memories from that link yet.', 'warning');
+    }
+  }
+
+  if (!syncId) {
+    updateSyncStatus('Creating your permanent memory link…');
+    syncId = await createCloudSync(memories);
+    if (!syncId) {
+      updateSyncStatus('Unable to create a cloud link right now.', 'warning');
+      return;
+    }
+    localStorage.setItem(SYNC_KEY, syncId);
+    updateSyncStatus('Your permanent link is ready. Share it to access memories anywhere.', 'success');
+    await saveMemoriesToCloud(syncId, memories);
+  } else {
+    updateSyncStatus('Your memories are connected to the permanent link.', 'success');
+  }
+
+  setSyncLink(syncId);
+}
+
+function copySyncLink() {
+  const linkInput = document.getElementById('syncLink');
+  if (!linkInput) {
+    return;
+  }
+  linkInput.select();
+  linkInput.setSelectionRange(0, linkInput.value.length);
+  navigator.clipboard?.writeText(linkInput.value).then(() => {
+    updateSyncStatus('Link copied! Open it on any device to see your memories.', 'success');
+  }).catch(() => {
+    updateSyncStatus('Copy failed. Please select the link and copy manually.', 'warning');
+  });
+}
+
 function addMemory() {
   const title = document.getElementById('memoryTitle').value;
   const text = document.getElementById('memoryText').value;
@@ -124,11 +204,11 @@ function addMemory() {
     renderMemory(memory);
   };
 
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const memory = {
-        title: title.trim(),
+ if (file) {␊
+    const reader = new FileReader();␊
+    reader.onload = function(e) {␊
+      const memory = {␊
+        title: title.trim(),␊
         text: text.trim(),
         mediaSrc: e.target.result,
         mediaType: file.type
@@ -154,7 +234,7 @@ function addMemory() {
   document.getElementById('memoryTitle').value = '';
   document.getElementById('memoryText').value = '';
   photoInput.value = '';
-}
+}␊
 
 /* ===== Floating Hearts ===== */
 function createHeart() {
@@ -178,8 +258,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const memories = loadMemories();
   renderMemories(memories);
 
+  ensureCloudSync(memories);
+
+  const copyLinkButton = document.getElementById('copySyncLink');
+  if (copyLinkButton) {
+    copyLinkButton.addEventListener('click', copySyncLink);
+  }
+
   const exportButton = document.getElementById('exportMemories');
   const importInput = document.getElementById('importMemories');
+  const generateButton = document.getElementById('generateSync');
+  const syncNowButton = document.getElementById('syncNow');
+  const syncCodeInput = document.getElementById('syncCode');
 
   exportButton.addEventListener('click', () => {
     const data = loadMemories();
@@ -222,8 +312,39 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     reader.readAsText(file);
   });
-});
 
+  generateButton.addEventListener('click', async () => {
+    const memoriesToSync = loadMemories();
+    updateSyncStatus('Generating a new shareable link…');
+    const syncId = await createCloudSync(memoriesToSync);
+    if (!syncId) {
+      updateSyncStatus('Unable to generate a new link right now.', 'warning');
+      return;
+    }
+    localStorage.setItem(SYNC_KEY, syncId);
+    setSyncLink(syncId);
+    updateSyncStatus('New link ready! Share it to access memories anywhere.', 'success');
+  });
+
+  syncNowButton.addEventListener('click', async () => {
+    const entered = syncCodeInput.value.trim();
+    if (!entered) {
+      updateSyncStatus('Enter a sync code to connect devices.', 'warning');
+      return;
+    }
+    localStorage.setItem(SYNC_KEY, entered);
+    setSyncLink(entered);
+    updateSyncStatus('Syncing memories from the code…');
+    const cloudMemories = await loadMemoriesFromCloud(entered);
+    if (cloudMemories) {
+      saveMemories(cloudMemories);
+      renderMemories(cloudMemories);
+      updateSyncStatus('Memories synced! They will stay available across devices.', 'success');
+    } else {
+      updateSyncStatus('Unable to load memories from that code.', 'warning');
+    }
+  });
+});
 /* ===== Lightbox ===== */
 function openLightbox(src, type, title, text) {
   const lightbox = document.getElementById('lightbox');
@@ -253,6 +374,3 @@ function closeLightbox() {
   document.getElementById('lightboxTitle').innerText = '';
   document.getElementById('lightboxText').innerText = '';
 }
-
-
-
