@@ -23,7 +23,15 @@
       <button onclick="addMemory()">Add Memory 💌</button>
     </section>
 
-    <section class="memory-sync">
+     <section class="memory-sync">
+      <div class="sync-status">
+        <p class="status-label">Permanent memory link</p>
+        <div class="sync-link-row">
+          <input type="text" id="syncLink" readonly placeholder="Creating your secure link...">
+          <button id="copySyncLink">Copy Link</button>
+        </div>
+        <p class="status-note" id="syncStatus">This link keeps your memories available on any device.</p>
+      </div>
       <div class="sync-row">
         <input type="text" id="syncCode" placeholder="Sync code ✨">
         <button id="generateSync">Generate Code</button>
@@ -62,6 +70,7 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
