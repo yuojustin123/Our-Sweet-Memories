@@ -57,30 +57,43 @@ function addMemory() {
 
   const memories = loadMemories();
 
-  const finalizeMemory = (memory) => {
+  const persistMemory = (memory) => {
     memories.push(memory);
     saveMemories(memories);
+  };
+
+  const showMemory = (memory) => {
     renderMemory(memory);
   };
 
   if (file) {
     const reader = new FileReader();
     reader.onload = function(e) {
-      finalizeMemory({
+      const displayMemory = {
         title: title.trim(),
         text: text.trim(),
         mediaSrc: e.target.result,
         mediaType: file.type
-      });
+      };
+      const storedMemory = {
+        title: displayMemory.title,
+        text: displayMemory.text,
+        mediaSrc: null,
+        mediaType: null
+      };
+      persistMemory(storedMemory);
+      showMemory(displayMemory);
     };
     reader.readAsDataURL(file);
   } else {
-    finalizeMemory({
+    const storedMemory = {
       title: title.trim(),
       text: text.trim(),
       mediaSrc: null,
       mediaType: null
-    });
+    };
+    persistMemory(storedMemory);
+    showMemory(storedMemory);
   }
 
   // Reset form
@@ -186,4 +199,5 @@ function closeLightbox() {
   document.getElementById('lightboxTitle').innerText = '';
   document.getElementById('lightboxText').innerText = '';
 }
+
 
