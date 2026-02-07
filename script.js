@@ -71,6 +71,7 @@ function openLightbox(src, type, title, text) {
 
   lightbox.style.display = 'flex';
 
+  // Left: show media
   if (!src) {
     mediaContainer.innerHTML = '';
   } else if (type.startsWith("image")) {
@@ -79,8 +80,9 @@ function openLightbox(src, type, title, text) {
     mediaContainer.innerHTML = `<video src="${src}" controls autoplay></video>`;
   }
 
-  titleContainer.innerText = title;
-  textContainer.innerText = text;
+  // Right: title + memory
+  titleContainer.innerText = title || "No title";
+  textContainer.innerText = text || "No memory text";
 }
 
 function closeLightbox() {
@@ -89,3 +91,4 @@ function closeLightbox() {
   document.getElementById('lightboxTitle').innerText = '';
   document.getElementById('lightboxText').innerText = '';
 }
+
