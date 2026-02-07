@@ -1,4 +1,6 @@
 const STORAGE_KEY = 'sweetMemories';
+const SYNC_KEY = 'sweetMemoriesSyncId';
+const CLOUD_BASE_URL = 'https://jsonblob.com/api/jsonBlob';
 
 function loadMemories() {
   try {
@@ -15,6 +17,65 @@ function saveMemories(memories) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(memories));
   } catch (error) {
     console.warn('Unable to save memories.', error);
+  }
+}
+
+async function saveMemoriesToCloud(syncId, memories) {
+  if (!syncId) {
+    return;
+  }
+  try {
+    const response = await fetch(`${CLOUD_BASE_URL}/${syncId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(memories)
+    });
+    if (!response.ok) {
+      throw new Error('Cloud save failed.');
+    }
+  } catch (error) {
+    console.warn('Unable to sync memories.', error);
+    alert('Unable to sync memories right now.');
+  }
+}
+
+async function createCloudSync(memories) {
+  try {
+    const response = await fetch(CLOUD_BASE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(memories)
+    });
+    if (!response.ok) {
+      throw new Error('Cloud create failed.');
+    }
+    const location = response.headers.get('Location');
+    if (!location) {
+      throw new Error('No sync location provided.');
+    }
+    return location.split('/').pop();
+  } catch (error) {
+    console.warn('Unable to create sync.', error);
+    alert('Unable to create a sync code right now.');
+    return null;
+  }
+}
+
+async function loadMemoriesFromCloud(syncId) {
+  if (!syncId) {
+    return null;
+  }
+  try {
+    const response = await fetch(`${CLOUD_BASE_URL}/${syncId}`);
+    if (!response.ok) {
+      throw new Error('Cloud load failed.');
+    }
+    const data = await response.json();
+    return Array.isArray(data) ? data : null;
+  } catch (error) {
+    console.warn('Unable to load sync data.', error);
+    alert('Unable to load memories from that code.');
+    return null;
   }
 }
 
@@ -57,43 +118,36 @@ function addMemory() {
 
   const memories = loadMemories();
 
-  const persistMemory = (memory) => {
+  const persistAndRender = (memory) => {
     memories.push(memory);
     saveMemories(memories);
-  };
-
-  const showMemory = (memory) => {
     renderMemory(memory);
   };
 
   if (file) {
     const reader = new FileReader();
     reader.onload = function(e) {
-      const displayMemory = {
+      const memory = {
         title: title.trim(),
         text: text.trim(),
         mediaSrc: e.target.result,
         mediaType: file.type
       };
-      const storedMemory = {
-        title: displayMemory.title,
-        text: displayMemory.text,
-        mediaSrc: null,
-        mediaType: null
-      };
-      persistMemory(storedMemory);
-      showMemory(displayMemory);
+      persistAndRender(memory);
+      const syncId = localStorage.getItem(SYNC_KEY);
+      saveMemoriesToCloud(syncId, memories);
     };
     reader.readAsDataURL(file);
   } else {
-    const storedMemory = {
+    const memory = {
       title: title.trim(),
       text: text.trim(),
       mediaSrc: null,
       mediaType: null
     };
-    persistMemory(storedMemory);
-    showMemory(storedMemory);
+    persistAndRender(memory);
+    const syncId = localStorage.getItem(SYNC_KEY);
+    saveMemoriesToCloud(syncId, memories);
   }
 
   // Reset form
@@ -199,5 +253,6 @@ function closeLightbox() {
   document.getElementById('lightboxTitle').innerText = '';
   document.getElementById('lightboxText').innerText = '';
 }
+
 
 
