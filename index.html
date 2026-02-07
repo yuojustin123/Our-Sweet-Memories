@@ -6,7 +6,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-public-feed-id="1194602717022687232">
 
   <div class="hearts"></div>
 
@@ -23,27 +23,10 @@
       <button onclick="addMemory()">Add Memory 💌</button>
     </section>
 
-     <section class="memory-sync">
-      <div class="sync-status">
-        <p class="status-label">Permanent memory link</p>
-        <div class="sync-link-row">
-          <input type="text" id="syncLink" readonly placeholder="Creating your secure link...">
-          <button id="copySyncLink">Copy Link</button>
-        </div>
-        <p class="status-note" id="syncStatus">This link keeps your memories available on any device.</p>
-      </div>
-      <div class="sync-row">
-        <input type="text" id="syncCode" placeholder="Sync code ✨">
-        <button id="generateSync">Generate Code</button>
-        <button id="syncNow">Sync Now</button>
-      </div>
-      <div class="sync-row">
-        <button id="exportMemories">Download Memories 📥</button>
-        <label class="import-button">
-          Import Memories 📤
-          <input type="file" id="importMemories" accept="application/json">
-        </label>
-      </div>
+   <section class="public-feed">
+      <p class="feed-title">Public Memory Feed</p>
+      <p class="feed-status" id="feedStatus">Connecting everyone to the shared memories…</p>
+      <p class="feed-note">All memories are shared in one public timeline, so anyone can add a new post.</p>
     </section>
 
     <section class="memory-list" id="memoryList">
@@ -70,6 +53,7 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
