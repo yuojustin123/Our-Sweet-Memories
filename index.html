@@ -16,7 +16,7 @@
   </header>
 
   <main>
-      <section class="memory-form">
+       <section class="memory-form">
       <input type="text" id="memoryTitle" placeholder="Memory Title 📝">
       <textarea id="memoryText" placeholder="Write your memory here..."></textarea>
       <input type="file" id="memoryPhoto" accept="image/*,video/*">
@@ -24,11 +24,18 @@
     </section>
 
     <section class="memory-sync">
-      <button id="exportMemories">Download Memories 📥</button>
-      <label class="import-button">
-        Import Memories 📤
-        <input type="file" id="importMemories" accept="application/json">
-      </label>
+      <div class="sync-row">
+        <input type="text" id="syncCode" placeholder="Sync code ✨">
+        <button id="generateSync">Generate Code</button>
+        <button id="syncNow">Sync Now</button>
+      </div>
+      <div class="sync-row">
+        <button id="exportMemories">Download Memories 📥</button>
+        <label class="import-button">
+          Import Memories 📤
+          <input type="file" id="importMemories" accept="application/json">
+        </label>
+      </div>
     </section>
 
     <section class="memory-list" id="memoryList">
@@ -55,5 +62,6 @@
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
